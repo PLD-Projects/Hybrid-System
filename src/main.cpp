@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266React.h>
 #include <NodeStateService.h>
+#include "ZMPT101B.h"
 
 #define SERIAL_BAUD_RATE 115200
 
@@ -21,6 +22,7 @@ NodeStateService loadNodeStateService = NodeStateService(&server,esp8266React.ge
 NodeStateService tsNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),TS_NODE_SOCKET_PATH);
 
 unsigned long last_millis = 0;
+ZMPT101B voltageSensor(36);
 
 void setup() {
   // start serial and filesystem
@@ -37,6 +39,12 @@ void setup() {
 
   // start the server
   server.begin();
+  Serial.println("Calibrating... Ensure that no current flows through the sensor at this moment");
+  delay(100);
+  voltageSensor.calibrate();
+  voltageSensor.setSensitivity(0.02245);
+//  currentSensor.calibrate();
+  Serial.println("Done!");
 }
 
 bool status = false;
@@ -46,19 +54,20 @@ String colour = "grey";
 void loop() {
   // run the framework's loop function
   esp8266React.loop();
+  float U = voltageSensor.getVoltageAC();
   if(millis()-last_millis > 5000){
     last_millis = millis();
     DynamicJsonDocument doc(2048);
 
     doc["node_color"] = colour;
     doc["node_status"] = status;
-    doc["node_val"] = val;
+    doc["node_val"] = U;
     status = !status;
     val++;
     if(colour == "grey")colour = "#ffcc00";
     else if(colour == "#ffcc00")colour = "red";
     else if(colour == "red")colour = "grey";
-
+    Serial.println(String("U = ") + U + " V");
     JsonObject jsonObject = doc.as<JsonObject>();
     gridNodeStateService.update(jsonObject,NodeState::update,"loop");
     batNodeStateService.update(jsonObject,NodeState::update,"loop");
