@@ -2,15 +2,19 @@
 
 ZMPT101B::ZMPT101B(uint8_t _pin) {
 	pin = _pin;
-	sensitivity = 0.019;
+	sensitivity = 1;
 }
 
 int ZMPT101B::calibrate() {
 	uint16_t acc = 0;
-	for (int i = 0; i < 10; i++) {
-		acc += analogRead(pin);
+	uint16_t max_val = 0;
+	uint16_t min_val = ADC_SCALE-1;
+	for (int i = 0; i < 1000; i++) {
+		acc = analogRead(pin);
+		max_val = max(acc,max_val);
+		min_val = min(acc,min_val);
 	}
-	zero = acc / 10;
+	zero = ((max_val-min_val)/2)+min_val;
 	return zero;
 }
 
@@ -38,12 +42,21 @@ float ZMPT101B::getVoltageAC(uint16_t frequency) {
 	uint32_t Vsum = 0, measurements_count = 0;
 	int32_t Vnow;
 
+	uint16_t acc = 0;
+	uint16_t max_val = 0;
+	uint16_t min_val = ADC_SCALE-1;
+
 	while (micros() - t_start < period) {
-		Vnow = analogRead(pin) - zero;
+		acc = analogRead(pin);
+		max_val = max(acc,max_val);
+		min_val = min(acc,min_val);
+		Vnow = acc - zero;
 		Vsum += Vnow*Vnow;
 		measurements_count++;
 	}
+	zero = ((max_val-min_val)/2)+min_val;
 
-	float Vrms = sqrt(Vsum / measurements_count) / ADC_SCALE * VREF / sensitivity;
+	float Vrms = sqrt(Vsum / measurements_count);
+	Vrms =  Vrms * sensitivity; //((Vrms / ADC_SCALE) * VREF)
 	return Vrms;
 }

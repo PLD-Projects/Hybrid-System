@@ -24,6 +24,8 @@ NodeStateService tsNodeStateService = NodeStateService(&server,esp8266React.getS
 unsigned long last_millis = 0;
 ZMPT101B voltageSensor(36);
 
+TaskHandle_t Grid_ADC_Task;
+
 void setup() {
   // start serial and filesystem
   Serial.begin(SERIAL_BAUD_RATE);
@@ -41,8 +43,8 @@ void setup() {
   server.begin();
   Serial.println("Calibrating... Ensure that no current flows through the sensor at this moment");
   delay(100);
-  voltageSensor.calibrate();
-  voltageSensor.setSensitivity(0.02245);
+  Serial.println(voltageSensor.calibrate());
+  voltageSensor.setSensitivity(0.35);
 //  currentSensor.calibrate();
   Serial.println("Done!");
 }

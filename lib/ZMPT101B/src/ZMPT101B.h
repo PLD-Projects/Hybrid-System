@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-#define ADC_SCALE 1023.0
-#define VREF 5.0
+#define ADC_SCALE 4096
+#define VREF 3.3
 #define DEFAULT_FREQUENCY 50
 
 class ZMPT101B {
@@ -17,7 +17,7 @@ public:
 	float getVoltageAC(uint16_t frequency = 50);
 
 private:
-	int zero = 512;
+	int zero = 2048;
 	float sensitivity;
 	uint8_t pin;
 };
