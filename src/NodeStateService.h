@@ -45,12 +45,12 @@ class NodeState {
 class NodeStateService : public StatefulService<NodeState> {
  public:
   NodeStateService(AsyncWebServer* server,
-                    SecurityManager* securityManager, const char* webSocketPath);
+                    SecurityManager* securityManager, const char* webSocketPath, int pin = 0);
   void begin();
 
  private:
   WebSocketTxRx<NodeState> _webSocket;
-  
+  int pinNum = 0;
   void registerConfig();
   void onConfigUpdated();
 };

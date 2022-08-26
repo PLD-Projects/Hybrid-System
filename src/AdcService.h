@@ -16,9 +16,28 @@ public:
     float sentivity_bat = 0;
     uint16_t frequency = 50;
 
+    uint16_t ov_grid = 260;
+    uint16_t uv_grid = 170;
+    uint32_t timeout_grid = 5000;
+    uint32_t _calc_time_grid = 0;
+    uint32_t _calc_time_grid_fail = 0;
+    uint32_t _calc_time_grid_ok = 0;
+    bool status_grid = false;
+    bool checking_grid = false;
+    
+    uint16_t ov_inv = 260;
+    uint16_t uv_inv = 170;
+    uint32_t timeout_inv = 5000;
+    uint32_t _calc_time_inv = 0;
+    bool status_inv = false;
+    bool checking_inv = false;
+
+    bool _inv_trans_cmpl = false;
+    bool _grid_trans_cmpl = true;
+
     AdcService();
-    void calibrate();
-    // void initService();
+    // void calibrate();
+    void initService();
     void startService();
     void stopService();
     // void setGridSensitivity();

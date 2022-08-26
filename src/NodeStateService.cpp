@@ -1,7 +1,7 @@
 #include <NodeStateService.h>
 
 NodeStateService::NodeStateService(AsyncWebServer* server,
-                                    SecurityManager* securityManager, const char* webSocketPath) :
+                                    SecurityManager* securityManager, const char* webSocketPath, int pin) :
     _webSocket(NodeState::read,
                NodeState::update,
                this,
@@ -10,7 +10,8 @@ NodeStateService::NodeStateService(AsyncWebServer* server,
                securityManager,
                AuthenticationPredicates::IS_AUTHENTICATED) {
   // configure led to be output
-  pinMode(LED_PIN, OUTPUT);
+  pinNum = pin;
+  if(pinNum > 0)pinMode(pinNum, OUTPUT);
 
   // configure settings service update handler to update LED state
   addUpdateHandler([&](const String& originId) { onConfigUpdated(); }, false);
@@ -25,6 +26,6 @@ void NodeStateService::begin() {
 }
 
 void NodeStateService::onConfigUpdated() {
-  // digitalWrite(LED_PIN, _state.ledOn ? LED_ON : LED_OFF);
+  if(pinNum > 0)digitalWrite(pinNum, _state.status ? LED_ON : LED_OFF);
 }
 
