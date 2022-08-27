@@ -34,9 +34,9 @@ class NodeState {
   }
 
   static StateUpdateResult update(JsonObject& root, NodeState& settings) {
-    settings.Color = root["node_color"].as<String>();
-    settings.val = root["node_val"];
-    settings.status = root["node_status"];
+    if(root.containsKey("node_color"))settings.Color = root["node_color"].as<String>();
+    if(root.containsKey("node_val"))settings.val = root["node_val"];
+    if(root.containsKey("node_status"))settings.status = root["node_status"];
     return StateUpdateResult::CHANGED;
   }
 

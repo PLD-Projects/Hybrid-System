@@ -26,6 +26,10 @@ void NodeStateService::begin() {
 }
 
 void NodeStateService::onConfigUpdated() {
-  if(pinNum > 0)digitalWrite(pinNum, _state.status ? LED_ON : LED_OFF);
+  if(pinNum > 0)
+  {
+    digitalWrite(pinNum, _state.status ? LED_ON : LED_OFF);
+    //Serial.println(_state.status);
+  }
 }
 

@@ -2,7 +2,9 @@
 #define ADCSERVICE_h
 
 #include <Arduino.h>
-#include "PinMapping.h"
+#include <Filters.h>  
+#include <PinMapping.h>
+#include <ESP32AnalogRead.h>
 
 class AdcService{
 public:
@@ -15,6 +17,7 @@ public:
     float sentivity_inv = 0;
     float sentivity_bat = 0;
     uint16_t frequency = 50;
+    float windowLength = 1/frequency; 
 
     uint16_t ov_grid = 260;
     uint16_t uv_grid = 170;
@@ -33,7 +36,15 @@ public:
     bool checking_inv = false;
 
     bool _inv_trans_cmpl = false;
-    bool _grid_trans_cmpl = true;
+    bool _grid_trans_cmpl = false;
+
+    RunningStatistics _runstat_grid;
+    RunningStatistics _runstat_inv;
+    RunningStatistics _runstat_bat;
+
+    ESP32AnalogRead _adc_grid;
+    ESP32AnalogRead _adc_inv;
+    ESP32AnalogRead _adc_bat;
 
     AdcService();
     // void calibrate();

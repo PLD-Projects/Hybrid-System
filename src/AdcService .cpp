@@ -3,10 +3,18 @@
 static void _core_task(void *parameter)
 {
     uint32_t _counter_timer = 0;
+    uint32_t filter_timer_grid = 0;
+    uint16_t filter_cnt_grid = 0;
+    uint32_t filter_timer_inv = 0;
+    uint16_t filter_cnt_inv = 0;
+    uint32_t grid_Vsum_avg = 0;
+    uint32_t inv_Vsum_avg = 0;
+
     while (1)
     {
         AdcService *l_pThis = (AdcService *) parameter; 
-        uint32_t period = 1000000 / l_pThis->frequency;
+        uint32_t period = (5000000 / l_pThis->frequency);
+        
 
         uint16_t grid_acc = 0;
         uint16_t grid_max_val = 0;
@@ -14,11 +22,18 @@ static void _core_task(void *parameter)
         uint32_t grid_Vsum = 0;
         int32_t grid_Vnow = 0;
 
+        uint16_t read_grid = 0;
+        
+
+
         uint16_t inv_acc = 0;
         uint16_t inv_max_val = 0;
         uint16_t inv_min_val = 5000;
         uint32_t inv_Vsum = 0;
         int32_t inv_Vnow = 0;
+
+        uint16_t read_inv = 0;
+        
 
         uint16_t bat_acc = 0;
         uint32_t bat_Vsum = 0;
@@ -26,22 +41,22 @@ static void _core_task(void *parameter)
         uint32_t measurements_count = 0;
 
         uint32_t t_start = micros();
+
         while (micros() - t_start < period) 
         {
-            grid_acc = analogRead(GRID_PIN);
+            grid_acc = l_pThis->_adc_grid.readMiliVolts();
             grid_max_val = max(grid_acc,grid_max_val);
             grid_min_val = min(grid_acc,grid_min_val);
             grid_Vnow = grid_acc - l_pThis->_zero_grid;
             grid_Vsum += grid_Vnow*grid_Vnow;
 
-            inv_acc = analogRead(INV_PIN);
-            // inv_acc = adc1_get_raw((adc1_channel_t)ADC1_CHANNEL_A3);
+            inv_acc = l_pThis->_adc_inv.readMiliVolts();
             inv_max_val = max(inv_acc,inv_max_val);
             inv_min_val = min(inv_acc,inv_min_val);
             inv_Vnow = inv_acc - l_pThis->_zero_inv;
             inv_Vsum += inv_Vnow*inv_Vnow;
 
-            bat_acc = analogRead(BAT_PIN);
+            bat_acc = l_pThis->_adc_bat.readMiliVolts();
             bat_Vsum += bat_acc;
             
             measurements_count++;
@@ -49,18 +64,60 @@ static void _core_task(void *parameter)
         l_pThis->_zero_grid = (l_pThis->_zero_grid+(((grid_max_val-grid_min_val)/2)+grid_min_val))/2;
         l_pThis->_zero_inv = (l_pThis->_zero_inv+(((inv_max_val-inv_min_val)/2)+inv_min_val))/2;
 
-        l_pThis->read_grid = (sqrt(grid_Vsum / measurements_count))*l_pThis->sentivity_grid; //((Vrms / ADC_SCALE) * VREF)
-        l_pThis->read_inv = (sqrt(inv_Vsum / measurements_count))*l_pThis->sentivity_inv; //((Vrms / ADC_SCALE) * VREF)
+        read_grid = (sqrt(grid_Vsum / measurements_count))*l_pThis->sentivity_grid; //((Vrms / ADC_SCALE) * VREF)
+        read_inv = (sqrt(inv_Vsum / measurements_count))*l_pThis->sentivity_inv; //((Vrms / ADC_SCALE) * VREF)
         l_pThis->read_bat = (bat_Vsum / measurements_count)*l_pThis->sentivity_bat; //((Vrms / ADC_SCALE) * VREF)
 
-        if(l_pThis->read_grid < 30)l_pThis->read_grid = 0;
-        if(l_pThis->read_inv < 30)l_pThis->read_inv = 0;
+        // Serial.print(read_grid);
+        // Serial.print("  ");
+        // Serial.print(read_inv);
+        // // Serial.print("  ");
+        // // Serial.print(l_pThis->read_bat);
+        // Serial.println();
+
+        if(read_grid < 150)l_pThis->read_grid = 0;
+        else
+        {
+            filter_cnt_grid++;
+            grid_Vsum_avg += read_grid;
+            if(millis()-filter_timer_grid > 1000)
+            {
+                filter_timer_grid = millis();
+                l_pThis->read_grid = grid_Vsum_avg/filter_cnt_grid;
+                filter_cnt_grid = 0;
+                grid_Vsum_avg = 0;
+            }
+
+        }
+        
+        if(read_inv < 150)l_pThis->read_inv = 0;
+        else
+        {
+            filter_cnt_inv++;
+            inv_Vsum_avg += read_inv;
+            if(millis()-filter_timer_inv > 1000)
+            {
+                filter_timer_inv = millis();
+                l_pThis->read_inv = inv_Vsum_avg/filter_cnt_inv;
+                filter_cnt_inv = 0;
+                inv_Vsum_avg = 0;
+            }
+
+        }
+        
+        // Serial.print(l_pThis->read_grid);
+        // Serial.print("  ");
+        // Serial.print(l_pThis->read_inv);
+        // // Serial.print("  ");
+        // // Serial.print(l_pThis->read_bat);
+        // Serial.println();
 
         if(l_pThis->read_grid > l_pThis->ov_grid || l_pThis->read_grid < l_pThis->uv_grid)
         {
             if (l_pThis->status_grid)
             {
-                // Serial.println("Grid failed");
+                Serial.println("Grid failed");
+                Serial.println(l_pThis->read_grid);
                 l_pThis->status_grid = false;
                 l_pThis->checking_grid = false;
                 digitalWrite(P_ATS_RLY,1);
@@ -172,11 +229,19 @@ void AdcService::initService()
 {
     pinMode(GRID_LED,OUTPUT);
     pinMode(INV_LED,OUTPUT);
-    pinMode(CHG_RLY,OUTPUT);
+    // pinMode(CHG_RLY,OUTPUT);
     pinMode(P_ATS_RLY,OUTPUT);
     pinMode(SG_ATS_RLY,OUTPUT);
     pinMode(SI_ATS_RLY ,OUTPUT);
     pinMode(INV_RLY,OUTPUT);
+
+    _adc_grid.attach(GRID_PIN);
+    _adc_inv.attach(INV_PIN);
+    _adc_bat.attach(BAT_PIN);
+
+    _runstat_grid.setWindowSecs( windowLength );
+    _runstat_inv.setWindowSecs( windowLength );
+    _runstat_bat.setWindowSecs( windowLength );
 
     uint16_t grid_acc = 0;
 	uint16_t grid_max_val = 0;

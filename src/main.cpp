@@ -46,9 +46,9 @@ void setup() {
   server.begin();
 
   ADC.initService();
-  ADC.sentivity_grid = 0.35;
-  ADC.sentivity_inv = 0.35;
-  ADC.sentivity_bat = 0.0163;
+  ADC.sentivity_grid = 0.43733;
+  ADC.sentivity_inv = 0.437333;
+  ADC.sentivity_bat = 1;//0.0163;
   ADC.startService();
   
 }
