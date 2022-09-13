@@ -25,6 +25,10 @@ void NodeStateService::begin() {
   onConfigUpdated();
 }
 
+void NodeStateService::updateStatus(){
+  if(_state.status != digitalRead(pinNum))_state.status = digitalRead(pinNum);
+}
+
 void NodeStateService::onConfigUpdated() {
   if(pinNum > 0)
   {

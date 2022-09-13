@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
+import React from 'react';
 
-import { Handle } from 'react-flow-renderer';
+import { Handle, Position } from 'react-flow-renderer';
 
 import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
 import PowerInputIcon from '@mui/icons-material/PowerInput';
@@ -9,11 +9,10 @@ import CottageIcon from '@mui/icons-material/Cottage';
 
 import { Typography,Grid,FormControlLabel,Switch} from '@mui/material';
 
-export default memo(({ data, isConnectable }) => {
+const LoadNode = ({ data, isConnectable }:any) => {
   return (
     <>
-
-    <Grid container spacing={0} align="center">
+    <Grid container spacing={0} style={{alignContent: "center"}}>
         <Grid item xs={12} style={{textAlign: "center"}}>
             <Typography align='center' sx={{ fontSize: 10 }}>Load</Typography>
         </Grid>
@@ -23,11 +22,20 @@ export default memo(({ data, isConnectable }) => {
       </Grid>
       <Handle
         type="target"
-        position="left"
+        position={Position.Right}
         id="a"
-        style={{ top: 40}}
         isConnectable={isConnectable}
+        style={{ background: 'transparent', top:30 }}
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="b"
+        isConnectable={isConnectable}
+        style={{ background: 'transparent' }}
       />
     </>
   );
-});
+};
+
+export default LoadNode;

@@ -22,7 +22,7 @@ const InvNode = ({ data, isConnectable }:any) => {
     <>
     <Grid container spacing={0} style={{alignContent: "center"}}>
         <Grid item xs={12} style={{textAlign: "center"}}>
-            <Typography align='center' sx={{ fontSize: 10 }}>{WS.data?.node_val.toString()}V</Typography>
+            <Typography align='center' sx={{ fontSize: 9}}>Off-Grid Inverter</Typography>
         </Grid>
         <Grid item xs={12} style={{textAlign: "center"}} sx={{ border: 1, fontSize:30 }} color={WS.data?.node_color}>
             <ElectricalServicesIcon sx={{ fontSize: 20 }}  />|<PowerInputIcon sx={{ fontSize: 20 }} />
@@ -38,22 +38,44 @@ const InvNode = ({ data, isConnectable }:any) => {
               size='small'
              />
              } 
-             label={<Typography  sx={{ fontSize: 10 }} align='center'>Inverter</Typography>} 
+             label={<Typography  sx={{ fontSize: 10 }} align='center'>{WS.data?.node_val.toFixed(0).toString()}V</Typography>} 
              labelPlacement='bottom' />
         </Grid>
       </Grid>
       <Handle
         type="target"
-        position={Position.Bottom}
+        position={Position.Left}
         id="a"
         isConnectable={isConnectable}
+        style={{ background: 'transparent', top: 35 }}
       />
       <Handle
         type="source"
-        position={Position.Left}
-        style={{ top: 40}}
+        position={Position.Top}
         id="b"
         isConnectable={isConnectable}
+        style={{ background: 'transparent' }}
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="c"
+        isConnectable={isConnectable}
+        style={{ background: 'transparent', top: 35 }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="d"
+        isConnectable={isConnectable}
+        style={{ background: 'transparent' }}
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="e"
+        isConnectable={isConnectable}
+        style={{ background: 'transparent' }}
       />
     </>
   );

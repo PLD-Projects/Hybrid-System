@@ -22,8 +22,8 @@ def buildWeb():
     os.chdir("interface")
     print("Building interface with npm")
     try:
-        env.Execute("npm install")
-        env.Execute("npm run build")
+        # env.Execute("npm install")
+        # env.Execute("npm run build")
         buildPath = Path("build")
         wwwPath = Path("../data/www")
         if wwwPath.exists() and wwwPath.is_dir():

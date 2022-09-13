@@ -2,7 +2,8 @@ import React from "react";
 
 import { Handle, Position } from 'react-flow-renderer';
 
-import BatteryChargingFullIcon from '@mui/icons-material/BatteryChargingFull';
+import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
+import PowerInputIcon from '@mui/icons-material/PowerInput';
 
 import {Typography,Grid,FormControlLabel,Switch} from '@mui/material';
 
@@ -11,35 +12,32 @@ import { updateValue, useWs } from '../../utils';
 
 import { NodeState } from '../types';
 
-export const NODE_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "BatNodeState";
+export const NODE_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "InvNodeState";
 
-const BatNode = ({ data, isConnectable }:any) => {
+const GInvNode = ({ data, isConnectable }:any) => {
   const WS = useWs<NodeState>(NODE_SETTINGS_WEBSOCKET_URL);
-  const updateFormValue = updateValue(WS.updateData);
 
+  const updateFormValue = updateValue(WS.updateData);
   return (
     <>
-    <Grid container spacing={0} >
+      <Grid container spacing={0} style={{alignContent: "center"}}>
         <Grid item xs={12} style={{textAlign: "center"}}>
-            <Typography align='center' sx={{ fontSize: 10 }}>Battery</Typography>
+            <Typography align='center' sx={{ fontSize: 8 }}>On-Grid Inverter</Typography>
         </Grid>
-        <Grid item xs={12} style={{textAlign: "center"}} color={WS.data?.node_color}>
-            <BatteryChargingFullIcon sx={{ fontSize: 40 }}  />
-        </Grid>
-        <Grid item xs={12} style={{textAlign: "center"}}>
-        <Typography  sx={{ fontSize: 10 }} align='center'>{WS.data?.node_val.toString()}V</Typography>
+        <Grid item xs={12} style={{textAlign: "center"}} sx={{ border: 1, fontSize:30 }} color={WS.data?.node_color}>
+            <ElectricalServicesIcon sx={{ fontSize: 20 }}  />|<PowerInputIcon sx={{ fontSize: 20 }} />
         </Grid>
       </Grid>
       <Handle
         type="target"
-        position={Position.Top}
+        position={Position.Left}
         id="a"
         isConnectable={isConnectable}
         style={{ background: 'transparent' }}
       />
       <Handle
         type="source"
-        position={Position.Top}
+        position={Position.Right}
         id="b"
         isConnectable={isConnectable}
         style={{ background: 'transparent' }}
@@ -48,4 +46,4 @@ const BatNode = ({ data, isConnectable }:any) => {
   );
 };
 
-export default BatNode;
+export default GInvNode;

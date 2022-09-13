@@ -7,21 +7,23 @@
 
 #define SERIAL_BAUD_RATE 115200
 
+#define PV_NODE_SOCKET_PATH "/ws/PvNodeState"
 #define GRID_NODE_SOCKET_PATH "/ws/GridNodeState"
-#define BAT_NODE_SOCKET_PATH "/ws/BatNodeState"
+#define GINV_NODE_SOCKET_PATH "/ws/GInvNodeState"
 #define INV_NODE_SOCKET_PATH "/ws/InvNodeState"
+#define BAT_NODE_SOCKET_PATH "/ws/BatNodeState"
 #define LOAD_NODE_SOCKET_PATH "/ws/LoadNodeState"
-#define TS_NODE_SOCKET_PATH "/ws/TsNodeState"
 
 // ws://localhost:3000/ws/nodeState?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiYWRtaW4iOnRydWV9.-oSCJXsk-RXgdeojzpH9O85GzBbuaSNUvc1ofx6-myA
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
 
+NodeStateService pvNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),PV_NODE_SOCKET_PATH);
 NodeStateService gridNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),GRID_NODE_SOCKET_PATH,CHG_RLY);
+NodeStateService ginvNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),GINV_NODE_SOCKET_PATH);
+NodeStateService invNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),INV_NODE_SOCKET_PATH,INV_RLY);
 NodeStateService batNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),BAT_NODE_SOCKET_PATH);
-NodeStateService invNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),INV_NODE_SOCKET_PATH);
 NodeStateService loadNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),LOAD_NODE_SOCKET_PATH);
-NodeStateService tsNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),TS_NODE_SOCKET_PATH);
 
 unsigned long last_millis = 0;
 // ZMPT101B voltageSensor(36);
@@ -31,16 +33,17 @@ void setup() {
   // start serial and filesystem
   Serial.begin(SERIAL_BAUD_RATE);
   pinMode(WIFI_LED,OUTPUT);
-  pinMode(STS_LED,OUTPUT);
+  
 
   // start the framework and demo project
   esp8266React.begin();
 
+  pvNodeStateService.begin();
   gridNodeStateService.begin();
-  batNodeStateService.begin();
+  ginvNodeStateService.begin();
   invNodeStateService.begin();
+  batNodeStateService.begin();
   loadNodeStateService.begin();
-  tsNodeStateService.begin();
 
   // start the server
   server.begin();
@@ -82,12 +85,14 @@ void loop() {
     jsonObject = doc.as<JsonObject>();
     batNodeStateService.update(jsonObject,NodeState::update,"loop");
 
+    
+    invNodeStateService.updateStatus();
     doc["node_val"] = ceil(ADC.read_inv);
     jsonObject = doc.as<JsonObject>();
     invNodeStateService.update(jsonObject,NodeState::update,"loop");
 
 
     loadNodeStateService.update(jsonObject,NodeState::update,"loop");
-    tsNodeStateService.update(jsonObject,NodeState::update,"loop");
+    // tsNodeStateService.update(jsonObject,NodeState::update,"loop");
   }
 }

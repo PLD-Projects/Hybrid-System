@@ -14,13 +14,17 @@ import BatNode from './CustomNodes/BatNode';
 import InvNode from './CustomNodes/InvNode';
 import TsNode from './CustomNodes/TsNode';
 import LoadNode from './CustomNodes/LoadNode';
+import GInvNode from './CustomNodes/GInvNode';
+import PvNode from './CustomNodes/PvNode';
 
 const nodeTypes = {
   GridNode: GridNode,
   BatNode: BatNode,
   InvNode: InvNode,
   TsNode: TsNode,
-  LoadNode:LoadNode
+  LoadNode:LoadNode,
+  GInvNode:GInvNode,
+  PvNode:PvNode,
 };
 
 export const DRAWER_WIDTH = 112;

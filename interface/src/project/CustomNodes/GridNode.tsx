@@ -28,7 +28,7 @@ const GridNode = ({ data, isConnectable }:any) => {
           <BoltIcon sx={{ fontSize: 40 }}  />
         </Grid>
         <Grid item xs={12} style={{textAlign: "center"}}>
-          <Typography align='center' sx={{ fontSize: 10 }}>{WS.data?.node_val.toString()} V</Typography>
+          <Typography align='center' sx={{ fontSize: 10 }}>{WS.data?.node_val.toFixed(0).toString()} V</Typography>
         </Grid>
         <Grid item xs={12} style={{textAlign: "center"}}>
           <FormControlLabel
@@ -47,16 +47,25 @@ const GridNode = ({ data, isConnectable }:any) => {
         </Grid>
       </Grid>
       <Handle
-         type="source"
-         position={Position.Bottom}
+         type="target"
+         position={Position.Top}
          id="a"
          isConnectable={isConnectable}
+         style={{ background: 'transparent' }}
       />
       <Handle
          type="source"
-         position={Position.Right}
+         position={Position.Left}
          id="b"
          isConnectable={isConnectable}
+         style={{ background: 'transparent' }}
+      />
+      <Handle
+         type="source"
+         position={Position.Bottom}
+         id="c"
+         isConnectable={isConnectable}
+         style={{ background: 'transparent' }}
       />
     </>
   );

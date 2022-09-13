@@ -47,6 +47,7 @@ class NodeStateService : public StatefulService<NodeState> {
   NodeStateService(AsyncWebServer* server,
                     SecurityManager* securityManager, const char* webSocketPath, int pin = 0);
   void begin();
+  void updateStatus();
 
  private:
   WebSocketTxRx<NodeState> _webSocket;

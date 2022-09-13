@@ -51,6 +51,7 @@ public:
     void initService();
     void startService();
     void stopService();
+    void core_task();
     // void setGridSensitivity();
     // void setInvSensitivity();
     // void setBatSensitivity();
