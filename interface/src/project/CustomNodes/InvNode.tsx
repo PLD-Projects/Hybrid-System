@@ -16,7 +16,6 @@ export const NODE_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "InvNodeState";
 
 const InvNode = ({ data, isConnectable }:any) => {
   const WS = useWs<NodeState>(NODE_SETTINGS_WEBSOCKET_URL);
-
   const updateFormValue = updateValue(WS.updateData);
   return (
     <>

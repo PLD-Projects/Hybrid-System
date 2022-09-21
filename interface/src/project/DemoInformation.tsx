@@ -5,7 +5,7 @@ import ReactFlow from 'react-flow-renderer';
 import { Box } from '@mui/material';
 
 import {defaultNodes,defaultEdges} from './nodes';
-// import defaultEdges from './edges.js';
+import {Edges} from './edges';
 
 import './css/reactflow.css';
 
@@ -39,6 +39,7 @@ const edgeOptions = {
 const connectionLineStyle = { stroke: 'white' };
 
 const DemoInformation: FC = () => {
+  const edge = Edges();
   return (
     <>
       <Box
@@ -46,8 +47,10 @@ const DemoInformation: FC = () => {
         sx={{height:{xs:'85vh', lg:'90vh'},}}
       >
         <ReactFlow
-          defaultNodes={defaultNodes}
-          defaultEdges={defaultEdges}
+          nodes={defaultNodes}
+          edges={edge.defaultEdges}
+          // defaultNodes={defaultNodes}
+          // defaultEdges={defaultEdges}
           defaultEdgeOptions={edgeOptions}
           nodeTypes={nodeTypes}
           panOnDrag={false}

@@ -12,7 +12,7 @@ import { updateValue, useWs } from '../../utils';
 
 import { NodeState } from '../types';
 
-export const NODE_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "InvNodeState";
+export const NODE_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "GInvNodeState";
 
 const GInvNode = ({ data, isConnectable }:any) => {
   const WS = useWs<NodeState>(NODE_SETTINGS_WEBSOCKET_URL);
@@ -28,7 +28,7 @@ const GInvNode = ({ data, isConnectable }:any) => {
             <ElectricalServicesIcon sx={{ fontSize: 20 }}  />|<PowerInputIcon sx={{ fontSize: 20 }} />
         </Grid>
       </Grid>
-      {false &&
+      {true &&
         <Handle
         type="target"
         position={Position.Left}

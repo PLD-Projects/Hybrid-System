@@ -30,15 +30,13 @@ const PvNode = ({ data, isConnectable }:any) => {
             <SolarPowerIcon sx={{ fontSize: 35 }}  />
         </Grid>
       </Grid>
-      {false &&
         <Handle
         type="source"
         position={Position.Top}
         id="a"
         isConnectable={isConnectable}
         style={{ background: 'transparent' }}
-      />}
-      
+      />
       <Handle
         type="source"
         position={Position.Bottom}
