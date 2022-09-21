@@ -71,31 +71,35 @@ void loop() {
     last_millis = millis();
     DynamicJsonDocument doc(2048);
     
-    doc["node_color"] = colour;
+    // pvNodeStateService
+    if(digitalRead(PV_PIN))doc["node_color"] = "green";
+    else doc["node_color"] = "grey";
+    JsonObject jsonObject = doc.as<JsonObject>();
+    pvNodeStateService.update(jsonObject,NodeState::update,"loop");
     // doc["node_status"] = status;
     // status = !status;
     // val++;
-    if(colour == "grey")colour = "#ffcc00";
-    else if(colour == "#ffcc00")colour = "red";
-    else if(colour == "red")colour = "grey";
+    // if(colour == "grey")colour = "#ffcc00";
+    // else if(colour == "#ffcc00")colour = "red";
+    // else if(colour == "red")colour = "grey";
     
 
-    doc["node_val"] = ceil(ADC.read_grid);
-    JsonObject jsonObject = doc.as<JsonObject>();
-    gridNodeStateService.update(jsonObject,NodeState::update,"loop");
+    // doc["node_val"] = ceil(ADC.read_grid);
+    // JsonObject jsonObject = doc.as<JsonObject>();
+    // gridNodeStateService.update(jsonObject,NodeState::update,"loop");
 
-    doc["node_val"] = ADC.read_bat; //String(ADC.read_bat);
-    jsonObject = doc.as<JsonObject>();
-    batNodeStateService.update(jsonObject,NodeState::update,"loop");
+    // doc["node_val"] = ADC.read_bat; //String(ADC.read_bat);
+    // jsonObject = doc.as<JsonObject>();
+    // batNodeStateService.update(jsonObject,NodeState::update,"loop");
 
     
-    invNodeStateService.updateStatus();
-    doc["node_val"] = ceil(ADC.read_inv);
-    jsonObject = doc.as<JsonObject>();
-    invNodeStateService.update(jsonObject,NodeState::update,"loop");
+    // invNodeStateService.updateStatus();
+    // doc["node_val"] = ceil(ADC.read_inv);
+    // jsonObject = doc.as<JsonObject>();
+    // invNodeStateService.update(jsonObject,NodeState::update,"loop");
 
 
-    loadNodeStateService.update(jsonObject,NodeState::update,"loop");
+    // loadNodeStateService.update(jsonObject,NodeState::update,"loop");
     // tsNodeStateService.update(jsonObject,NodeState::update,"loop");
   }
 }

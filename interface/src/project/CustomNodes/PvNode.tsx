@@ -26,7 +26,7 @@ const PvNode = ({ data, isConnectable }:any) => {
         <Grid item xs={12} style={{textAlign: "center"}}>
             <Typography align='center' sx={{ fontSize: 10 }}>PV</Typography>
         </Grid>
-        <Grid item xs={12} style={{textAlign: "center"}}>
+        <Grid item xs={12} style={{textAlign: "center"}} color={WS.data?.node_color}>
             <SolarPowerIcon sx={{ fontSize: 35 }}  />
         </Grid>
       </Grid>

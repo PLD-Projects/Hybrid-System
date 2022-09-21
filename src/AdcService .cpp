@@ -16,12 +16,12 @@ void AdcService::initService()
     pinMode(GRID_LED,OUTPUT);
     pinMode(INV_LED,OUTPUT);
     pinMode(STS_LED,OUTPUT);
-    // pinMode(CHG_RLY,OUTPUT);
     pinMode(P_ATS_RLY,OUTPUT);
     pinMode(SG_ATS_RLY,OUTPUT);
     pinMode(SI_ATS_RLY ,OUTPUT);
     pinMode(INV_RLY,OUTPUT);
     
+    pinMode(PV_PIN,INPUT);
 
     _adc_grid.attach(GRID_PIN);
     _adc_inv.attach(INV_PIN);

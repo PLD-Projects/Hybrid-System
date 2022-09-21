@@ -4,6 +4,7 @@
 #define  GRID_PIN A0
 #define  INV_PIN A3
 #define  BAT_PIN A7 
+#define  PV_PIN 33
 
 #define  GRID_LED 18  
 #define  INV_LED 5 
