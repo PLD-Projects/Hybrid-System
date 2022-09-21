@@ -10,7 +10,16 @@ import SolarPowerIcon from '@mui/icons-material/SolarPower';
 
 import { Typography,Grid,FormControlLabel,Switch} from '@mui/material';
 
+import { WEB_SOCKET_ROOT } from '../../api/endpoints';
+import { updateValue, useWs } from '../../utils';
+
+import { NodeState } from '../types';
+
+export const NODE_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "PvNodeState";
+
 const PvNode = ({ data, isConnectable }:any) => {
+  const WS = useWs<NodeState>(NODE_SETTINGS_WEBSOCKET_URL);
+  const updateFormValue = updateValue(WS.updateData);
   return (
     <>
     <Grid container spacing={0} style={{alignContent: "center"}}>
@@ -21,13 +30,15 @@ const PvNode = ({ data, isConnectable }:any) => {
             <SolarPowerIcon sx={{ fontSize: 35 }}  />
         </Grid>
       </Grid>
-      <Handle
+      {false &&
+        <Handle
         type="source"
         position={Position.Top}
         id="a"
         isConnectable={isConnectable}
         style={{ background: 'transparent' }}
-      />
+      />}
+      
       <Handle
         type="source"
         position={Position.Bottom}

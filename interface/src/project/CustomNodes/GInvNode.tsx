@@ -28,13 +28,16 @@ const GInvNode = ({ data, isConnectable }:any) => {
             <ElectricalServicesIcon sx={{ fontSize: 20 }}  />|<PowerInputIcon sx={{ fontSize: 20 }} />
         </Grid>
       </Grid>
-      <Handle
+      {false &&
+        <Handle
         type="target"
         position={Position.Left}
         id="a"
         isConnectable={isConnectable}
         style={{ background: 'transparent' }}
       />
+      }
+      
       <Handle
         type="source"
         position={Position.Right}

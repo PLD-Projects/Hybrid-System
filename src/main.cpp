@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266React.h>
 #include <NodeStateService.h>
+#include <EdgeStateService.h>
 #include <AdcService.h>
 #include <PinMapping.h>
 // #include "ZMPT101B.h"
@@ -13,6 +14,7 @@
 #define INV_NODE_SOCKET_PATH "/ws/InvNodeState"
 #define BAT_NODE_SOCKET_PATH "/ws/BatNodeState"
 #define LOAD_NODE_SOCKET_PATH "/ws/LoadNodeState"
+#define EDGE_SOCKET_PATH "/ws/EdgeState"
 
 // ws://localhost:3000/ws/nodeState?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiYWRtaW4iOnRydWV9.-oSCJXsk-RXgdeojzpH9O85GzBbuaSNUvc1ofx6-myA
 AsyncWebServer server(80);
@@ -24,6 +26,7 @@ NodeStateService ginvNodeStateService = NodeStateService(&server,esp8266React.ge
 NodeStateService invNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),INV_NODE_SOCKET_PATH,INV_RLY);
 NodeStateService batNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),BAT_NODE_SOCKET_PATH);
 NodeStateService loadNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),LOAD_NODE_SOCKET_PATH);
+EdgeStateService EdgesStateService = EdgeStateService(&server,esp8266React.getSecurityManager(),EDGE_SOCKET_PATH);
 
 unsigned long last_millis = 0;
 // ZMPT101B voltageSensor(36);
@@ -67,7 +70,7 @@ void loop() {
   if(millis()-last_millis > 5000){
     last_millis = millis();
     DynamicJsonDocument doc(2048);
-
+    
     doc["node_color"] = colour;
     // doc["node_status"] = status;
     // status = !status;
