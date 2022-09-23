@@ -16,16 +16,23 @@
 #define LOAD_NODE_SOCKET_PATH "/ws/LoadNodeState"
 #define EDGE_SOCKET_PATH "/ws/EdgeState"
 
+#define PV_NODE_STATUS_FILE "/config/PvNode.json"
+#define GRID_NODE_STATUS_FILE "/config/GridNode.json"
+#define GINV_NODE_STATUS_FILE "/config/GinvNode.json"
+#define INV_NODE_STATUS_FILE "/config/InvNode.json"
+#define BAT_NODE_STATUS_FILE "/config/BatNode.json"
+#define LOAD_NODE_STATUS_FILE "/config/LoaddNode.json"
+
 // ws://localhost:3000/ws/nodeState?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiYWRtaW4iOnRydWV9.-oSCJXsk-RXgdeojzpH9O85GzBbuaSNUvc1ofx6-myA
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
 
-NodeStateService pvNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),PV_NODE_SOCKET_PATH);
-NodeStateService gridNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),GRID_NODE_SOCKET_PATH,CHG_RLY);
-NodeStateService ginvNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),GINV_NODE_SOCKET_PATH);
-NodeStateService invNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),INV_NODE_SOCKET_PATH,INV_RLY);
-NodeStateService batNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),BAT_NODE_SOCKET_PATH);
-NodeStateService loadNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),LOAD_NODE_SOCKET_PATH);
+NodeStateService pvNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),PV_NODE_SOCKET_PATH,esp8266React.getFS(),PV_NODE_STATUS_FILE);
+NodeStateService gridNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),GRID_NODE_SOCKET_PATH,esp8266React.getFS(),GRID_NODE_STATUS_FILE,CHG_RLY);
+NodeStateService ginvNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),GINV_NODE_SOCKET_PATH,esp8266React.getFS(),GINV_NODE_STATUS_FILE);
+NodeStateService invNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),INV_NODE_SOCKET_PATH,esp8266React.getFS(),INV_NODE_STATUS_FILE,INV_RLY);
+NodeStateService batNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),BAT_NODE_SOCKET_PATH,esp8266React.getFS(),BAT_NODE_STATUS_FILE);
+NodeStateService loadNodeStateService = NodeStateService(&server,esp8266React.getSecurityManager(),LOAD_NODE_SOCKET_PATH,esp8266React.getFS(),LOAD_NODE_STATUS_FILE);
 EdgeStateService edgesStateService = EdgeStateService(&server,esp8266React.getSecurityManager(),EDGE_SOCKET_PATH);
 
 unsigned long last_millis = 0;
@@ -55,7 +62,7 @@ void setup() {
   ADC.initService();
   ADC.sentivity_grid = 0.43733;
   ADC.sentivity_inv = 0.437333;
-  ADC.sentivity_bat = 1;//0.0163;
+  ADC.sentivity_bat = 0.0171;
   ADC.startService();
   
 }

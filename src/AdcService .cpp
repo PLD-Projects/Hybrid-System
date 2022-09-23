@@ -86,12 +86,14 @@ void AdcService::core_task()
         uint16_t grid_min_val = 5000;
         uint32_t grid_Vsum = 0;
         int32_t grid_Vnow = 0;
-     
+        float _read_grid = 0;
+
         uint16_t inv_acc = 0;
         uint16_t inv_max_val = 0;
         uint16_t inv_min_val = 5000;
         uint32_t inv_Vsum = 0;
         int32_t inv_Vnow = 0;
+        float _read_inv = 0;
   
         uint16_t bat_acc = 0;
         uint32_t bat_Vsum = 0;
@@ -122,8 +124,8 @@ void AdcService::core_task()
         _zero_grid = (_zero_grid+(((grid_max_val-grid_min_val)/2)+grid_min_val))/2;
         _zero_inv = (_zero_inv+(((inv_max_val-inv_min_val)/2)+inv_min_val))/2;
 
-        read_grid = (sqrt(grid_Vsum / measurements_count))*sentivity_grid; //((Vrms / ADC_SCALE) * VREF)
-        read_inv = (sqrt(inv_Vsum / measurements_count))*sentivity_inv; //((Vrms / ADC_SCALE) * VREF)
+        _read_grid = (sqrt(grid_Vsum / measurements_count))*sentivity_grid; //((Vrms / ADC_SCALE) * VREF)
+        _read_inv = (sqrt(inv_Vsum / measurements_count))*sentivity_inv; //((Vrms / ADC_SCALE) * VREF)
         read_bat = (bat_Vsum / measurements_count)*sentivity_bat; //((Vrms / ADC_SCALE) * VREF)
 
         // Serial.print(read_grid);
@@ -133,34 +135,24 @@ void AdcService::core_task()
         // // Serial.print(read_bat);
         // Serial.println();
 
-        if(read_grid < 150)read_grid = 0;
-        else
+        filter_cnt_grid++;
+        grid_Vsum_avg += _read_grid;
+        if(millis()-filter_timer_grid > 1000)
         {
-            filter_cnt_grid++;
-            grid_Vsum_avg += read_grid;
-            if(millis()-filter_timer_grid > 1000)
-            {
-                filter_timer_grid = millis();
-                read_grid = grid_Vsum_avg/filter_cnt_grid;
-                filter_cnt_grid = 0;
-                grid_Vsum_avg = 0;
-            }
-
+            filter_timer_grid = millis();
+            read_grid = grid_Vsum_avg/filter_cnt_grid;
+            filter_cnt_grid = 0;
+            grid_Vsum_avg = 0;
         }
         
-        if(read_inv < 150)read_inv = 0;
-        else
+        filter_cnt_inv++;
+        inv_Vsum_avg += _read_inv;
+        if(millis()-filter_timer_inv > 1000)
         {
-            filter_cnt_inv++;
-            inv_Vsum_avg += read_inv;
-            if(millis()-filter_timer_inv > 1000)
-            {
-                filter_timer_inv = millis();
-                read_inv = inv_Vsum_avg/filter_cnt_inv;
-                filter_cnt_inv = 0;
-                inv_Vsum_avg = 0;
-            }
-
+            filter_timer_inv = millis();
+            read_inv = inv_Vsum_avg/filter_cnt_inv;
+            filter_cnt_inv = 0;
+            inv_Vsum_avg = 0;
         }
         
         // Serial.print(read_grid);

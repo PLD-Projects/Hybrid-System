@@ -1,14 +1,15 @@
 #include <NodeStateService.h>
 
 NodeStateService::NodeStateService(AsyncWebServer* server,
-                                    SecurityManager* securityManager, const char* webSocketPath, int pin) :
+                                    SecurityManager* securityManager, const char* webSocketPath, FS* fs,const char* filePath, int pin) :
     _webSocket(NodeState::read,
                NodeState::update,
                this,
                server,
                webSocketPath,
                securityManager,
-               AuthenticationPredicates::IS_AUTHENTICATED) {
+               AuthenticationPredicates::IS_AUTHENTICATED),
+    _fsPersistence(NodeState::read, NodeState::update, this, fs, filePath) {
   // configure led to be output
   pinNum = pin;
   if(pinNum > 0)pinMode(pinNum, OUTPUT);
@@ -19,9 +20,11 @@ NodeStateService::NodeStateService(AsyncWebServer* server,
 }
 
 void NodeStateService::begin() {
-  _state.Color = "grey";
-  _state.val = 0;
-  _state.status = false;
+  // _state.Color = "grey";
+  // _state.val = 0;
+  // _state.status = false;
+  
+  _fsPersistence.readFromFS();
   onConfigUpdated();
 }
 

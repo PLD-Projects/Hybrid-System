@@ -2,6 +2,7 @@
 #define NodeStateService_h
 
 #include <WebSocketTxRx.h>
+#include <FSPersistence.h>
 
 #define LED_PIN 2
 
@@ -44,13 +45,13 @@ class NodeState {
 
 class NodeStateService : public StatefulService<NodeState> {
  public:
-  NodeStateService(AsyncWebServer* server,
-                    SecurityManager* securityManager, const char* webSocketPath, int pin = 0);
+  NodeStateService(AsyncWebServer* server, SecurityManager* securityManager, const char* webSocketPath, FS* fs, const char* filePath, int pin = 0);
   void begin();
   void updateStatus();
 
  private:
   WebSocketTxRx<NodeState> _webSocket;
+  FSPersistence<NodeState> _fsPersistence;
   int pinNum = 0;
   void registerConfig();
   void onConfigUpdated();
